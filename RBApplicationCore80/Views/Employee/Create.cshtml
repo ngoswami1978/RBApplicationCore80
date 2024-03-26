@@ -1,0 +1,115 @@
+﻿@using RBApplicationCore80.ModelData
+@model RBApplicationCore80.ViewModel.EmployeeViewModel
+
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Employee</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        @* @using (Html.BeginForm("Create", "Employee", FormMethod.Post))
+        { *@
+        <form asp-controller="Employee" asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="FirstName" class="control-label"></label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MiddleName" class="control-label"></label>
+                <input asp-for="MiddleName" class="form-control" />
+                <span asp-validation-for="MiddleName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName" class="control-label"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Gender" class="control-label"></label>
+                <select asp-for="Gender" asp-items="Html.GetEnumSelectList<Gender>()" class="form-control"></select>
+                <span asp-validation-for="Gender" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Address" class="control-label"></label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="City" class="control-label"></label>
+                <input asp-for="City" class="form-control" />
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="State" class="control-label"></label>
+                <input asp-for="State" class="form-control" />
+                <span asp-validation-for="State" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Country" class="control-label"></label>
+                <input asp-for="Country" class="form-control" />
+                <span asp-validation-for="Country" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PhoneNo" class="control-label"></label>
+                <input asp-for="PhoneNo" class="form-control" />
+                <span asp-validation-for="PhoneNo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MobileNo" class="control-label"></label>
+                <input asp-for="MobileNo" class="form-control" />
+                <span asp-validation-for="MobileNo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EmailAddress" class="control-label"></label>
+                <input asp-for="EmailAddress" class="form-control" />
+                <span asp-validation-for="EmailAddress" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Occupation" class="control-label"></label>
+                @Html.DropDownListFor(m => m.Occupation, Model.occupation, "Please select", htmlAttributes: new { @class = "form-control" })
+
+                @* <select class="form-select" asp-items="Model.occupation"></select>  *@                
+                @*@Html.DropDownListFor(m => m.Occupation, new SelectList(Model.occupation, "Occupation", "OccupationName"), "Select", htmlAttributes: new { @class = "form-control" }) *@
+                @* @Html.DropDownListFor(M => M.occupation, new SelectList(Model.occupation, "OccupationId", "OccupationName"), htmlAttributes: new { @class = "form-control" })  *@
+                @* @Html.LabelFor(model => model.occupation, htmlAttributes: new { @class = "control-label col-md-2" }) *@
+                @* <select id="drpEmpList" class="form-control" asp-for="occupation" asp-items="@(new SelectList(Model.occupation, "OccupationId", "OccupationName"))">
+                    <option value="">--Select--</option>  
+                </select>   *@
+
+            </div>
+            <div class="form-group">
+                <label asp-for="Dob" class="control-label"></label>
+                <input asp-for="Dob" class="form-control" />
+                <span asp-validation-for="Dob" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="role" class="control-label"></label>
+                @* <input asp-for="role" class="form-control" />
+                <span asp-validation-for="role" class="text-danger"></span> *@
+
+                @Html.DropDownListFor(m => m.role, Model.role_, "Please select", htmlAttributes: new { @class = "form-control" })
+
+
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+       </form> 
+        @* } *@
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
