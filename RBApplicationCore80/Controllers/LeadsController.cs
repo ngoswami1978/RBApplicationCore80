@@ -76,7 +76,7 @@ namespace RBApplicationCore80.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        //[ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SpeakerViewModel model)
         {
             
@@ -105,7 +105,7 @@ namespace RBApplicationCore80.Controllers
 
 
                 _context.Add(speaker);
-                await _context.SaveChangesAsync();                
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(model);
