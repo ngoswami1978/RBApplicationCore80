@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using RBApplicationCore80.Data;
@@ -25,12 +26,16 @@ namespace RBApplicationCore80.Controllers
         }
 
         // GET: Leads
+        [OutputCache(PolicyName = "PeoplePolicy")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.SalesLead.ToListAsync());
         }
 
         // GET: Leads/Details/5
+        //[ResponseCache(Duration = 180, Location = ResponseCacheLocation.Any, VaryByQueryKeys = new string[] { "id" })]
+        //[ResponseCache(Duration = 60)]
+        [OutputCache(PolicyName = "CachePost")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -71,9 +76,10 @@ namespace RBApplicationCore80.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SpeakerViewModel model)
         {
+            
             if (ModelState.IsValid)
             {
                 string uniqueFileName = ProcessUploadedFile(model);
@@ -99,7 +105,7 @@ namespace RBApplicationCore80.Controllers
 
 
                 _context.Add(speaker);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();                
                 return RedirectToAction(nameof(Index));
             }
             return View(model);
