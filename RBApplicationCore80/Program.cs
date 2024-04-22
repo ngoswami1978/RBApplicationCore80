@@ -25,9 +25,21 @@ builder.Services.AddAuthorization(options =>
 });
 
 
+builder.Services.AddOutputCache(options =>
+{
+    options.AddBasePolicy(policy => policy
+        .Expire(TimeSpan.FromSeconds(10)));
+
+    options.AddPolicy("PeoplePolicy", policy => policy
+        .Expire(TimeSpan.FromMinutes(10))
+        .Tag("PeoplePolicy_Tag"));
+    
+});
+
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -41,6 +53,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseOutputCache();
 
 app.UseAuthorization();
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using System.Diagnostics;
 
 namespace RBApplicationCore80.Controllers
@@ -15,6 +16,8 @@ namespace RBApplicationCore80.Controllers
         {
             this.roleManager = roleManager;                
         }
+
+        [OutputCache(PolicyName = "PeoplePolicy")]
         [Authorize(Policy ="readpolicy")]
         public IActionResult Index()
         {

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using RBApplicationCore80.Data;
@@ -25,6 +26,7 @@ namespace RBApplicationCore80.Controllers
         }
 
         // GET: Leads
+        [OutputCache(PolicyName = "PeoplePolicy")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.SalesLead.ToListAsync());
@@ -72,7 +74,7 @@ namespace RBApplicationCore80.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(SpeakerViewModel model)
+        public async Task<IActionResult> Create(SpeakerViewModel model, IOutputCacheStore cache)
         {
             if (ModelState.IsValid)
             {
@@ -100,6 +102,7 @@ namespace RBApplicationCore80.Controllers
 
                 _context.Add(speaker);
                 await _context.SaveChangesAsync();
+                await cache.EvictByTagAsync("PeoplePolicy_Tag", default);
                 return RedirectToAction(nameof(Index));
             }
             return View(model);
