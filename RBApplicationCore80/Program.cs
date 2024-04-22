@@ -34,22 +34,18 @@ builder.Services.AddOutputCache(options =>
     options.AddBasePolicy(policy => policy
         .Expire(TimeSpan.FromSeconds(10)));
 
-    options.AddPolicy("PeoplePolicy", policy => policy
-        .Expire(TimeSpan.FromMinutes(10))
-        .Tag("PeoplePolicy_Tag"));
+    options.AddPolicy("CachePost", MyCustomPolicy.Instance);
 
-    options.AddPolicy("CachePost", MyCustomPolicy.Instance);  
-
+    options.AddPolicy("PeoplePolicy", options => options
+    .Expire(TimeSpan.FromMinutes(10)));
 });
-/*new code*/
-//builder.Services.AddMemoryCache();
-//builder.Services.AddInMemoryResponseCache();
-/**/
 
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = "127.0.0.1:6379";
+});
 
 builder.Services.AddRazorPages();
-
-
 
 var app = builder.Build();
 

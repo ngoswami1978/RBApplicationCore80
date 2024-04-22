@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 using RBApplicationCore80.Data;
 using RBApplicationCore80.Models;
 using RBApplicationCore80.ViewModel;
@@ -18,18 +21,46 @@ namespace RBApplicationCore80.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment webHostEnvironment;
         static string base64String = null;
+        private readonly IDistributedCache distributedCache;
 
-        public LeadsController(ApplicationDbContext context , IWebHostEnvironment hostEnvironment)
+        public LeadsController(ApplicationDbContext context , IWebHostEnvironment hostEnvironment,IDistributedCache distributedCache)
         {
             _context = context;
             webHostEnvironment = hostEnvironment;
+            this.distributedCache = distributedCache;
         }
 
         // GET: Leads
         [OutputCache(PolicyName = "PeoplePolicy")]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.SalesLead.ToListAsync());
+            /*start C:\Program Files\Memurai\memurai-cli.exe to achieve Redis Cache*/
+            string serializedLeads;
+            var actorName = "keysalelead";
+            var cacheKey = actorName.ToLower();
+            var encodedLeads = await distributedCache.GetAsync(cacheKey);
+            IEnumerable<SalesLeadEntity> LeadsList;
+
+            if (encodedLeads != null)
+            {
+                serializedLeads = Encoding.UTF8.GetString(encodedLeads);
+                LeadsList = JsonConvert.DeserializeObject<List<SalesLeadEntity>>(serializedLeads);
+            }
+            else
+            {
+                LeadsList = await _context.SalesLead.ToListAsync();
+                serializedLeads = JsonConvert.SerializeObject(LeadsList);
+                encodedLeads = Encoding.UTF8.GetBytes(serializedLeads);
+                var options = new DistributedCacheEntryOptions()
+                                .SetSlidingExpiration(TimeSpan.FromMinutes(5))
+                                .SetAbsoluteExpiration(DateTime.Now.AddHours(6));
+                await distributedCache.SetAsync(cacheKey, encodedLeads, options);
+            }
+            return View(LeadsList);
+            /*end C:\Program Files\Memurai\memurai-cli.exe to achieve Redis Cache*/
+
+            //return View(await _context.SalesLead.ToListAsync());
+
         }
 
         // GET: Leads/Details/5
@@ -76,7 +107,7 @@ namespace RBApplicationCore80.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        //[ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SpeakerViewModel model)
         {
             
@@ -105,7 +136,7 @@ namespace RBApplicationCore80.Controllers
 
 
                 _context.Add(speaker);
-                await _context.SaveChangesAsync();                
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(model);
