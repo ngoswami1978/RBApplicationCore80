@@ -1,1 +1,1 @@
-Daatabse Name - SalesCRM
+Database Name - SalesCRM
