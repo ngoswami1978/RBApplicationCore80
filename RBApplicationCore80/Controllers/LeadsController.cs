@@ -31,7 +31,7 @@ namespace RBApplicationCore80.Controllers
         }
 
         // GET: Leads
-        [OutputCache(PolicyName = "PeoplePolicy")]
+        [OutputCache(PolicyName = "PeoplePolicy")] 
         public async Task<IActionResult> Index()
         {
             /*start C:\Program Files\Memurai\memurai-cli.exe to achieve Redis Cache*/

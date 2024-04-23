@@ -25,7 +25,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("readpolicy", builder => builder.RequireRole("Admin", "User"));
-    options.AddPolicy("writepolicy",builder => builder.RequireRole("Admin"));
+    options.AddPolicy("writepolicy", builder => builder.RequireRole("Admin"));
 });
 
 
@@ -34,23 +34,16 @@ builder.Services.AddOutputCache(options =>
     options.AddBasePolicy(policy => policy
         .Expire(TimeSpan.FromSeconds(10)));
 
-    options.AddPolicy("PeoplePolicy", policy => policy
-        .Expire(TimeSpan.FromMinutes(10))
-        .Tag("PeoplePolicy_Tag"));
-<<<<<<<<< Temporary merge branch 1
-    
+    options.AddPolicy("CachePost", MyCustomPolicy.Instance);
+
+    options.AddPolicy("PeoplePolicy", options => options
+    .Expire(TimeSpan.FromMinutes(10)));
 });
-=========
 
-    options.AddPolicy("CachePost", MyCustomPolicy.Instance);  
-
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = "127.0.0.1:6379";
 });
-/*new code*/
-//builder.Services.AddMemoryCache();
-//builder.Services.AddInMemoryResponseCache();
-/**/
-
->>>>>>>>> Temporary merge branch 2
 
 builder.Services.AddRazorPages();
 
